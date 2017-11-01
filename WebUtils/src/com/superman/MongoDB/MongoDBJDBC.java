@@ -1,4 +1,4 @@
-package com.superman.database.MongoDB;
+package com.superman.MongoDB;
 
 import java.util.ArrayList;
 import java.util.HashMap;

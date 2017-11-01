@@ -1,4 +1,4 @@
-package com.superman.database.xmlparse;
+package com.superman.xmlparse;
 
 public class xmlTest {
 

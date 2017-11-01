@@ -1,4 +1,4 @@
-package com.superman.database.Timer;
+package com.superman.Timer;
 
 import java.util.Timer;
 
