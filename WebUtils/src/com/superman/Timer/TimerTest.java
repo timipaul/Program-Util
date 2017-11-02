@@ -12,7 +12,7 @@ public class TimerTest {
         // 延时 1 秒后，按 3 秒的周期执行任务
         timer.scheduleAtFixedRate(timeTask, 1000, 60000, TimeUnit.MILLISECONDS);*/
 		 Timer timer = new Timer(); 
-	      timer.schedule(new Task(), 1000);
+	     timer.schedule(new TomcatOnLoadTask(), 1000);
 	}
 
 }

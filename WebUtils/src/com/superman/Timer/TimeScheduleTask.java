@@ -2,14 +2,18 @@ package com.superman.Timer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-public class TimeTask implements Runnable {
+/**
+ * 该定时任务是用线程池的方式进行启动
+ * @author Ningsc(supermanNingsc)
+ *
+ */
+public class TimeScheduleTask implements Runnable {
 	
 	public  int sleepTime;
 	
 	public SimpleDateFormat dateFormat;
 	
-	public TimeTask(int sleepTime){
+	public TimeScheduleTask(int sleepTime){
 		 this.sleepTime = sleepTime;
          dateFormat = new SimpleDateFormat("HH:mm:ss");
 	}
