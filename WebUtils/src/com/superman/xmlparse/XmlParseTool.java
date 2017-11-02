@@ -21,7 +21,6 @@ public class XmlParseTool {
 	
 	private static Map<String, Map<String, String>> xmlMap = new  HashMap<String, Map<String, String>>();
 	
-	private static Map<String, Object> xmlMapText = new  HashMap<String, Object>();
 	
 	/**
 	 * 解析文件内容为xml格式(数据是以标签属性来赋值)数据的文件,并以map存储
@@ -67,7 +66,8 @@ public class XmlParseTool {
 		try {
 			Document doc = new SAXReader().read(xmlFile);
 			Element  rootElement = doc.getRootElement();
-			return parseTextXML(rootElement);
+			Map<String,Object> contentMap = new HashMap<String,Object>();
+			return parseTextXML(rootElement,contentMap);
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
@@ -83,7 +83,8 @@ public class XmlParseTool {
 		try {
 			Document doc = DocumentHelper.parseText(strXml);
 			Element  rootElement = doc.getRootElement();
-			return parseTextXML(rootElement);
+			Map<String,Object> contentMap = new HashMap<String,Object>();
+			return parseTextXML(rootElement,contentMap);
 		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
@@ -122,35 +123,24 @@ public class XmlParseTool {
 	 * @param ele
 	 * @return
 	 */
-	public static Map<String, Object> parseTextXML(Element ele) {
-		Map<String, Object> contentMap =  new HashMap<String, Object>();;// 存储xml标签text内容集合
-		for (Iterator<?> i = ele.elementIterator(); i.hasNext();) {
-			Element node = (Element) i.next();
-			System.out.println("parseXML node name:" + node.getName());
-			// 如果xml标签中文本内容解析
-			if (node.elementIterator().hasNext() == false  && node.getText().length() > 0) {
+	public static Map<String, Object> parseTextXML(Element ele,Map<String,Object> contentMap) {
+		// 存储xml标签text内容集合
+		Iterator<?> objIterator = ele.elementIterator();
+		while(objIterator.hasNext()){
+			Element node = (Element) objIterator.next();
+			if(node.getText() != null){
+				contentMap = new HashMap<String,Object>();
 				contentMap.put(node.getName(), node.getText());
 			}
-			// 如果解析的该节点下还有标签继续解析
-			if (node.elementIterator().hasNext()) {
-				parseTextXML(node);
+			if(node.elementIterator().hasNext()){
+				contentMap = new HashMap<String,Object>();
+				contentMap = parseTextXML(node,contentMap);
+				contentMap.put(node.getName(), contentMap);
 			}
-		}
-		return null;
-	}
-	
-	public static Map<String,String> deepParseXml(Element ele){
-		Map<String, String> contentMap =  new HashMap<String, String>();;// 存储xml标签text内容集合
-		for (Iterator<?> i = ele.elementIterator(); i.hasNext();) {
-			Element node = (Element) i.next();
-			System.out.println("parseXML node name:" + node.getName());
-			// 如果xml标签中文本内容解析
-			if (node.elementIterator().hasNext() == false  && node.getText().length() > 0) {
-				
-				contentMap.put(node.getName(), node.getText());
-			}	
 		}
 		return contentMap;
 	}
+	
+	
 
 }
