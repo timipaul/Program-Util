@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0"
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  <servlet>
+    <servlet-name>TimerTaskRunServlet</servlet-name>
+    <servlet-class>com.superman.Timer.TimerTaskRunServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>  
+    <!-- 增加<load-on-startup>配置，可以使<servlet-class>中的类随Tomcat启动而自动启动。  -->
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>TimerTaskRunServlet</servlet-name>
+    <url-pattern>/TimerTaskRunServlet</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 定时任务监听器 -->
+  <listener>
+  	<listener-class>com.superman.Timer.TimerTaskRunListener</listener-class>
+  </listener>
+
+</web-app>
