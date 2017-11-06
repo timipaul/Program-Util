@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.superman.domain.Classes">
+		<id name="cid" length="5">
+			<generator class="increment"></generator>
+		</id>
+		<property name="description" length="50"></property>
+		<property name="name" length="20"></property>
+		<!-- 
+			set元素针对的就是Classes类中的Set属性
+			cascade  级联操作
+			   null  默认值
+			   save-update
+			      	在保存classes对象的时候，针对student进行保存或者更新的操作
+			      	在更新classes对象的时候，针对student进行保存或者更新的操作
+			   all
+			   delete
+			inverse  关系操作
+			   default:classes维护classes与student之间的关系
+			   true:   classes不维护classes与student之间的关系
+			   false:  classes维护classes与student之间的关系
+		 -->
+		<set name="students" cascade="save-update" inverse="true">
+			<!-- 
+				外键
+				   	告诉hibernate,通过cid就可以建立classes与student之间的关联
+			 -->
+			<key>
+				<column name="cid"></column>
+			</key>
+			<!-- 
+				告诉hibernate，Classes类中的set集合中存放的是哪个元素
+			 -->
+			<one-to-many class="com.itheima12.hibernate.domain.Student"/>
+		</set>
+	</class>
+</hibernate-mapping>
