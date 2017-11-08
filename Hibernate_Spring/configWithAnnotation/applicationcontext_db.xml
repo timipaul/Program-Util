@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+           
+        <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+   		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+   		<property name="url" value="jdbc:mysql://localhost:3306/${数据库名}"></property>
+   		<property name="username" value="${用户名}"></property>
+   		<property name="password" value="${用户密码}"></property>
+   </bean> 
+   <!--  <context:property-placeholder
+	location="classpath:io/shuqi/ssh/spring/transactionalAnnotation/jdbc.properties" />
+	c3p0数据源配置
+	<bean id="c3p0DataSources" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driver}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+
+		<property name="initialPoolSize" value="${jdbc.initPoolSize}"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+	</bean> -->
+   
+   <!-- 配置SessionFactory -->
+   <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+   		<property name="dataSource" ref="dataSource"></property>
+   		<property name="hibernateProperties">
+   			<props>
+   				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>  
+                <prop key="hibernate.hbm2ddl.auto">update</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+                <prop key="hibernate.format_sql">true</prop>  
+   			</props>
+   		</property>
+   		<!-- 基于注解的list方式  -->
+   		<property name="annotatedClasses">
+   			<list>
+   				<value>com.superman.entity.${类名}</value>
+   				<value>com.superman.entity.${类名}</value>
+   			</list>
+   		</property>
+   		<!-- 基于注解的包扫描 -->
+   		<!-- <property name="packagesToScan" value="com.superman.entity"/> -->
+   </bean>
+   
+   <!-- 配置一个事物管理器 -->
+   <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+   		<property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+   
+   <!-- 开启spring注解驱动，及@Transaction注解的开启，在service中对于需要事务处理的方法，在其方法上添加@Transaction注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+   
+   
+	
+           
+</beans>

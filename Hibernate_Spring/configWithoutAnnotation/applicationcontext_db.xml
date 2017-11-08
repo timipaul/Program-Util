@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<!-- 引入prperties配置文件 -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:jdbc.properties</value>
+		</property>
+	</bean>
+
+
+	<!-- 配置数据源,使用DBCP数据源配置xml -->
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!-- 创建sessionFactory对象 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 映射文件所在的路径 -->
+		<property name="mappingDirectoryLocations">
+			<list>
+				<!-- spring容器会去该包及子包下搜索所有的映射文件 -->
+				<value>classpath:com/superman/domain/mappconfig</value>
+			</list>
+		</property>
+		<!-- 使用通配符 Resources -->
+		<!-- <property name="mappingLocations"> <list> <value>classpath:com/superman/domain/mappconfig/*.hbm.xml</value> 
+			</list> </property> -->
+		<!-- 使用逐一列出配置文件的方式 -->
+		<!-- <property name="mappingResources"> <list><value>io/shuqi/ssh/spring/transactionalAnnotation/hibernate3/User.hbm.xml</value> 
+			</list> </property> -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 为数据库配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<!-- spring接收数据库的事务管理器 -->
+	<tx:advice transaction-manager="transactionManager" id="tx">
+		<tx:attributes>
+			<tx:method name="save*" read-only="false" />
+			<tx:method name="update*" read-only="false" />
+			<tx:method name="delete*" read-only="false" />
+			<!-- 除了save开头的方法以外，其他的方法用只读事务 -->
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- spring使用aop编程为逻辑层注入事务管理器 -->
+	<aop:config>
+		<aop:pointcut expression="execution(* com.superman.service.impl.*.*(..))"
+			id="perform" />
+		<aop:advisor advice-ref="tx" pointcut-ref="perform" />
+	</aop:config>
+
+</beans>
